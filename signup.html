@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow - Signup</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="auth-body">
+
+<div class="auth-container">
+
+    <div class="auth-brand">
+        <div class="logo">✓</div>
+        <h1>TaskFlow</h1>
+        <p>Create your account and manage tasks easily</p>
+    </div>
+
+    <div class="auth-card">
+
+        <h2>Create Account</h2>
+        <p class="subtitle">Register as a user</p>
+
+        <form id="signupForm">
+
+            <label>Full Name</label>
+            <input type="text" id="signupName" placeholder="Enter your name" required>
+
+            <label>Email</label>
+            <input type="email" id="signupEmail" placeholder="Enter your email" required>
+
+            <label>Password</label>
+            <input type="password" id="signupPassword" placeholder="Create password" required>
+
+            <button type="submit" class="primary-btn">
+                Create Account
+            </button>
+
+        </form>
+
+        <p id="signupMessage" class="message"></p>
+
+        <p class="switch">
+            Already have an account?
+            <a href="index.html">Login</a>
+        </p>
+
+    </div>
+
+</div>
+
+<script>
+
+document.getElementById("signupForm").addEventListener("submit", function(e) {
+
+    e.preventDefault();
+
+    const name = document.getElementById("signupName").value.trim();
+    const email = document.getElementById("signupEmail").value.trim();
+    const password = document.getElementById("signupPassword").value;
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    // Check existing user
+    const existingUser = users.find(user => user.email === email);
+
+    const message = document.getElementById("signupMessage");
+
+    if (existingUser) {
+        message.textContent = "An account with this email already exists.";
+        message.className = "message error";
+        return;
+    }
+
+    const newUser = {
+        id: Date.now(),
+        name: name,
+        email: email,
+        password: password,
+        role: "user"
+    };
+
+    users.push(newUser);
+
+    localStorage.setItem("users", JSON.stringify(users));
+
+    message.textContent = "Account created successfully!";
+    message.className = "message success";
+
+    document.getElementById("signupForm").reset();
+
+    setTimeout(() => {
+        window.location.href = "index.html";
+    }, 1200);
+
+});
+
+</script>
+
+</body>
+</html>

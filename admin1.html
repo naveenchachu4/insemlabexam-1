@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="bg-slate-800 border-b border-slate-700 px-6 py-4 flex justify-between items-center shadow-md">
+        <div class="flex items-center space-x-3">
+            <i class="fas fa-user-shield text-blue-400 text-2xl"></i>
+            <span class="text-xl font-bold">Admin Management Console</span>
+        </div>
+        <button onclick="logout()" class="bg-red-600/80 hover:bg-red-600 text-white text-sm px-4 py-2 rounded-xl transition shadow">
+            <i class="fas fa-sign-out-alt mr-1"></i> Logout
+        </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-6 space-y-8">
+
+        <!-- Stats Overview Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl shadow-lg flex items-center space-x-4">
+                <div class="p-4 bg-blue-600/20 text-blue-400 rounded-xl border border-blue-500/20">
+                    <i class="fas fa-users text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-slate-400">Logged-in Members</p>
+                    <h3 id="memberCount" class="text-2xl font-bold mt-1">0</h3>
+                </div>
+            </div>
+
+            <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl shadow-lg flex items-center space-x-4">
+                <div class="p-4 bg-emerald-600/20 text-emerald-400 rounded-xl border border-emerald-500/20">
+                    <i class="fas fa-book text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-slate-400">Available Books</p>
+                    <h3 id="availableCount" class="text-2xl font-bold mt-1">0</h3>
+                </div>
+            </div>
+
+            <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl shadow-lg flex items-center space-x-4">
+                <div class="p-4 bg-amber-600/20 text-amber-400 rounded-xl border border-amber-500/20">
+                    <i class="fas fa-book-reader text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-slate-400">Total Catalog Books</p>
+                    <h3 id="totalBooksCount" class="text-2xl font-bold mt-1">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Add Book Form -->
+            <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl shadow-lg h-fit">
+                <h2 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-plus-circle text-blue-400 mr-2"></i> Add New Book
+                </h2>
+                <form id="addBookForm" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Book Title</label>
+                        <input type="text" id="bookTitle" required placeholder="e.g. Clean Architecture" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Author</label>
+                        <input type="text" id="bookAuthor" required placeholder="e.g. Robert C. Martin" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Category</label>
+                        <input type="text" id="bookCategory" required placeholder="e.g. Technology" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Image URL</label>
+                        <input type="url" id="bookImage" placeholder="https://example.com/cover.jpg" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm focus:outline-none focus:border-blue-500">
+                    </div>
+                    <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm rounded-xl shadow transition">
+                        Add to Catalog
+                    </button>
+                </form>
+            </div>
+
+            <!-- Manage Books Table -->
+            <div class="lg:col-span-2 bg-slate-800 border border-slate-700 p-6 rounded-2xl shadow-lg">
+                <h2 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-tasks text-blue-400 mr-2"></i> Manage Library Catalog
+                </h2>
+                <div class="overflow-x-auto max-h-[500px]">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-700 text-slate-400">
+                                <th class="py-3 px-4">Book</th>
+                                <th class="py-3 px-4">Category</th>
+                                <th class="py-3 px-4">Status</th>
+                                <th class="py-3 px-4 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminBooksTable">
+                            <!-- Populated Dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Check authentication
+        const currentUser = JSON.parse(localStorage.getItem('library_current_user'));
+        if (!currentUser || currentUser.role !== 'admin') {
+            window.location.href = 'index.html';
+        }
+
+        function refreshDashboard() {
+            const books = JSON.parse(localStorage.getItem('library_books') || '[]');
+            const members = JSON.parse(localStorage.getItem('library_members') || '[]');
+
+            // Update stats
+            document.getElementById('memberCount').textContent = members.length;
+            document.getElementById('availableCount').textContent = books.filter(b => b.status === 'Available').length;
+            document.getElementById('totalBooksCount').textContent = books.length;
+
+            // Render table
+            const tbody = document.getElementById('adminBooksTable');
+            tbody.innerHTML = '';
+
+            if (books.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-400">No books available in catalog.</td></tr>`;
+                return;
+            }
+
+            books.forEach(book => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-slate-700/50 hover:bg-slate-700/20";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 flex items-center space-x-3">
+                        <img src="${book.image || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e'}" class="w-10 h-12 object-cover rounded-lg shadow">
+                        <div>
+                            <div class="font-bold text-slate-100">${book.title}</div>
+                            <div class="text-xs text-slate-400">by ${book.author}</div>
+                        </div>
+                    </td>
+                    <td class="py-3 px-4 text-slate-300">${book.category || 'General'}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2.5 py-1 text-xs font-semibold rounded-full ${book.status === 'Available' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'}">
+                            ${book.status}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-right">
+                        <button onclick="removeBook(${book.id})" class="px-3 py-1.5 bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/30 rounded-lg text-xs transition">
+                            <i class="fas fa-trash"></i> Remove
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.getElementById('addBookForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const title = document.getElementById('bookTitle').value.trim();
+            const author = document.getElementById('bookAuthor').value.trim();
+            const category = document.getElementById('bookCategory').value.trim();
+            const image = document.getElementById('bookImage').value.trim() || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&w=400&q=80';
+
+            let books = JSON.parse(localStorage.getItem('library_books') || '[]');
+            const newBook = {
+                id: Date.now(),
+                title,
+                author,
+                category,
+                image,
+                status: 'Available'
+            };
+
+            books.push(newBook);
+            localStorage.setItem('library_books', JSON.stringify(books));
+
+            document.getElementById('addBookForm').reset();
+            refreshDashboard();
+        });
+
+        function removeBook(id) {
+            let books = JSON.parse(localStorage.getItem('library_books') || '[]');
+            books = books.filter(b => b.id !== id);
+            localStorage.setItem('library_books', JSON.stringify(books));
+            refreshDashboard();
+        }
+
+        function logout() {
+            localStorage.removeItem('library_current_user');
+            window.location.href = 'index.html';
+        }
+
+        refreshDashboard();
+    </script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library - User Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="bg-slate-800 border-b border-slate-700 px-6 py-4 flex justify-between items-center shadow-md">
+        <div class="flex items-center space-x-3">
+            <i class="fas fa-book-open text-blue-400 text-2xl"></i>
+            <span class="text-xl font-bold">Library Member Portal</span>
+        </div>
+        <div class="flex items-center space-x-4">
+            <span id="welcomeUser" class="text-sm text-slate-300 font-medium">Welcome, User</span>
+            <button onclick="logout()" class="bg-red-600/80 hover:bg-red-600 text-white text-sm px-4 py-2 rounded-xl transition shadow">
+                <i class="fas fa-sign-out-alt mr-1"></i> Logout
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-6">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+            <div>
+                <h1 class="text-3xl font-bold">Available Books</h1>
+                <p class="text-slate-400 text-sm mt-1">Explore and borrow books from our collection</p>
+            </div>
+            <div class="w-full md:w-72">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                        <i class="fas fa-search"></i>
+                    </span>
+                    <input type="text" id="searchInput" oninput="renderBooks()" placeholder="Search books or authors..." class="w-full pl-10 pr-4 py-2 bg-slate-800 border border-slate-700 rounded-xl focus:outline-none focus:border-blue-500 text-sm">
+                </div>
+            </div>
+        </div>
+
+        <!-- Books Grid -->
+        <div id="booksGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Dynamic Books Rendered Here -->
+        </div>
+    </main>
+
+    <script>
+        // Check authentication
+        const currentUser = JSON.parse(localStorage.getItem('library_current_user'));
+        if (!currentUser || currentUser.role !== 'user') {
+            window.location.href = 'index.html';
+        } else {
+            document.getElementById('welcomeUser').textContent = `Welcome, ${currentUser.name}`;
+        }
+
+        function renderBooks() {
+            const books = JSON.parse(localStorage.getItem('library_books') || '[]');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const grid = document.getElementById('booksGrid');
+            grid.innerHTML = '';
+
+            const filtered = books.filter(b => b.title.toLowerCase().includes(search) || b.author.toLowerCase().includes(search));
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400">No books found matching your search.</div>`;
+                return;
+            }
+
+            filtered.forEach(book => {
+                const isAvailable = book.status === 'Available';
+                const card = document.createElement('div');
+                card.className = "bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <div class="h-48 overflow-hidden bg-slate-700 relative">
+                            <img src="${book.image || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e'}" alt="${book.title}" class="w-full h-full object-cover">
+                            <span class="absolute top-3 right-3 px-2.5 py-1 text-xs font-semibold rounded-full ${isAvailable ? 'bg-emerald-500/90 text-white' : 'bg-amber-500/90 text-white'} shadow">
+                                ${book.status}
+                            </span>
+                        </div>
+                        <div class="p-4">
+                            <span class="text-xs font-medium text-blue-400 uppercase tracking-wider">${book.category || 'General'}</span>
+                            <h3 class="text-lg font-bold mt-1 text-slate-100 truncate">${book.title}</h3>
+                            <p class="text-sm text-slate-400 mt-0.5">by ${book.author}</p>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0">
+                        <button onclick="toggleBorrow(${book.id})" class="w-full py-2.5 rounded-xl font-medium text-sm transition shadow ${isAvailable ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-slate-700 hover:bg-slate-600 text-slate-300'}">
+                            ${isAvailable ? '<i class="fas fa-book mr-1.5"></i> Borrow Book' : '<i class="fas fa-undo mr-1.5"></i> Return Book'}
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function toggleBorrow(id) {
+            let books = JSON.parse(localStorage.getItem('library_books') || '[]');
+            books = books.map(b => {
+                if (b.id === id) {
+                    b.status = b.status === 'Available' ? 'Borrowed' : 'Available';
+                }
+                return b;
+            });
+            localStorage.setItem('library_books', JSON.stringify(books));
+            renderBooks();
+        }
+
+        function logout() {
+            localStorage.removeItem('library_current_user');
+            window.location.href = 'index.html';
+        }
+
+        renderBooks();
+    </script>
+</body>
+</html>

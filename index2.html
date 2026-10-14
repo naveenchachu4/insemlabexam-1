@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow - Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="auth-body">
+
+<div class="auth-container">
+
+    <div class="auth-brand">
+        <div class="logo">✓</div>
+        <h1>TaskFlow</h1>
+        <p>Simple Task Management System</p>
+    </div>
+
+    <div class="auth-card">
+        <h2>Welcome Back</h2>
+        <p class="subtitle">Login to manage your tasks</p>
+
+        <form id="loginForm">
+
+            <label>Email</label>
+            <input type="email" id="loginEmail" placeholder="Enter your email" required>
+
+            <label>Password</label>
+            <input type="password" id="loginPassword" placeholder="Enter your password" required>
+
+            <button type="submit" class="primary-btn">Login</button>
+
+        </form>
+
+        <p id="loginMessage" class="message"></p>
+
+        <p class="switch">
+            Don't have an account?
+            <a href="signup.html">Create Account</a>
+        </p>
+
+        <div class="demo-info">
+            <strong>Demo Admin</strong>
+            <p>Email: admin@gmail.com</p>
+            <p>Password: admin123</p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+    // Create default admin account
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    const adminExists = users.some(user => user.email === "admin@gmail.com");
+
+    if (!adminExists) {
+        users.push({
+            id: Date.now(),
+            name: "Admin",
+            email: "admin@gmail.com",
+            password: "admin123",
+            role: "admin"
+        });
+
+        localStorage.setItem("users", JSON.stringify(users));
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+
+        e.preventDefault();
+
+        const email = document.getElementById("loginEmail").value.trim();
+        const password = document.getElementById("loginPassword").value;
+
+        const users = JSON.parse(localStorage.getItem("users")) || [];
+
+        const user = users.find(
+            u => u.email === email && u.password === password
+        );
+
+        const message = document.getElementById("loginMessage");
+
+        if (!user) {
+            message.textContent = "Invalid email or password.";
+            message.className = "message error";
+            return;
+        }
+
+        // Save logged-in user
+        localStorage.setItem("loggedInUser", JSON.stringify(user));
+
+        // Role-based navigation
+        window.location.href = "dashboard.html";
+    });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        Task Manager - Admin
+    </div>
+
+    <button onclick="logout()" class="logout-btn">
+        Logout
+    </button>
+
+</header>
+
+
+<main class="dashboard">
+
+    <h1>Admin Dashboard</h1>
+
+
+    <!-- Admin Statistics -->
+
+    <div class="stats">
+
+        <div class="stat-card">
+
+            <h3>Total Users</h3>
+
+            <p id="totalUsers">
+                0
+            </p>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <h3>Total Tasks</h3>
+
+            <p id="adminTotalTasks">
+                0
+            </p>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <h3>Completed</h3>
+
+            <p id="adminCompleted">
+                0
+            </p>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <h3>Pending</h3>
+
+            <p id="adminPending">
+                0
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <section>
+
+        <h2>All Tasks</h2>
+
+        <div id="adminTaskList"
+             class="task-list">
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>

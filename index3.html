@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl w-full max-w-md p-8 text-white">
+        <div class="text-center mb-8">
+            <div class="inline-block p-4 rounded-full bg-blue-600/30 border border-blue-400/30 mb-3 shadow-lg">
+                <i class="fas fa-book-reader text-4xl text-blue-400"></i>
+            </div>
+            <h1 class="text-3xl font-bold tracking-wide">Library Portal</h1>
+            <p class="text-slate-300 text-sm mt-1">Please sign in to continue</p>
+        </div>
+
+        <form id="loginForm" class="space-y-5">
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">Select Role</label>
+                <div class="grid grid-cols-2 gap-4">
+                    <button type="button" id="roleUserBtn" onclick="setRole('user')" class="py-2.5 px-4 rounded-xl font-medium border transition-all bg-blue-600 border-blue-500 shadow-md">
+                        <i class="fas fa-user mr-2"></i> User
+                    </button>
+                    <button type="button" id="roleAdminBtn" onclick="setRole('admin')" class="py-2.5 px-4 rounded-xl font-medium border transition-all bg-white/5 border-white/10 text-slate-300 hover:bg-white/10">
+                        <i class="fas fa-user-shield mr-2"></i> Admin
+                    </button>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">Username / Email</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                        <i class="fas fa-envelope"></i>
+                    </span>
+                    <input type="text" id="username" required placeholder="Enter username" class="w-full pl-10 pr-4 py-2.5 bg-black/30 border border-white/10 rounded-xl focus:outline-none focus:border-blue-500 text-white placeholder-slate-500">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">Password</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                        <i class="fas fa-lock"></i>
+                    </span>
+                    <input type="password" id="password" required placeholder="••••••••" class="w-full pl-10 pr-4 py-2.5 bg-black/30 border border-white/10 rounded-xl focus:outline-none focus:border-blue-500 text-white placeholder-slate-500">
+                </div>
+            </div>
+
+            <div id="errorMsg" class="hidden text-red-400 text-sm bg-red-900/30 border border-red-500/30 p-2.5 rounded-lg text-center"></div>
+
+            <button type="submit" class="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 font-semibold rounded-xl shadow-lg transition-all transform active:scale-95">
+                Sign In
+            </button>
+        </form>
+
+        <div class="mt-6 text-center text-xs text-slate-400 border-t border-white/10 pt-4">
+            <p>Demo credentials — User: <span class="text-blue-300">user / user123</span> | Admin: <span class="text-blue-300">admin / admin123</span></p>
+        </div>
+    </div>
+
+    <script>
+        let currentRole = 'user';
+
+        function setRole(role) {
+            currentRole = role;
+            const userBtn = document.getElementById('roleUserBtn');
+            const adminBtn = document.getElementById('roleAdminBtn');
+            const usernameInput = document.getElementById('username');
+
+            if (role === 'user') {
+                userBtn.className = "py-2.5 px-4 rounded-xl font-medium border transition-all bg-blue-600 border-blue-500 shadow-md";
+                adminBtn.className = "py-2.5 px-4 rounded-xl font-medium border transition-all bg-white/5 border-white/10 text-slate-300 hover:bg-white/10";
+                usernameInput.value = "john_reader";
+            } else {
+                adminBtn.className = "py-2.5 px-4 rounded-xl font-medium border transition-all bg-blue-600 border-blue-500 shadow-md";
+                userBtn.className = "py-2.5 px-4 rounded-xl font-medium border transition-all bg-white/5 border-white/10 text-slate-300 hover:bg-white/10";
+                usernameInput.value = "admin";
+            }
+        }
+
+        // Initialize default demo book catalog if not present
+        if (!localStorage.getItem('library_books')) {
+            const initialBooks = [
+                { id: 1, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', category: 'Fiction', image: 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&w=400&q=80', status: 'Available' },
+                { id: 2, title: 'Atomic Habits', author: 'James Clear', category: 'Self-Help', image: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=400&q=80', status: 'Available' },
+                { id: 3, title: 'Clean Code', author: 'Robert C. Martin', category: 'Technology', image: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&w=400&q=80', status: 'Available' }
+            ];
+            localStorage.setItem('library_books', JSON.stringify(initialBooks));
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const errorDiv = document.getElementById('errorMsg');
+
+            if (currentRole === 'admin') {
+                if (username === 'admin') {
+                    localStorage.setItem('library_current_user', JSON.stringify({ role: 'admin', name: 'Administrator' }));
+                    window.location.href = 'admin.html';
+                } else {
+                    errorDiv.textContent = 'Invalid Admin username (use "admin")';
+                    errorDiv.classList.remove('hidden');
+                }
+            } else {
+                if (username) {
+                    // Track logged in member
+                    let members = JSON.parse(localStorage.getItem('library_members') || '[]');
+                    if (!members.includes(username)) {
+                        members.push(username);
+                        localStorage.setItem('library_members', JSON.stringify(members));
+                    }
+                    localStorage.setItem('library_current_user', JSON.stringify({ role: 'user', name: username }));
+                    window.location.href = 'user.html';
+                } else {
+                    errorDiv.textContent = 'Please enter a valid username';
+                    errorDiv.classList.remove('hidden');
+                }
+            }
+        });
+
+        // Set default value on load
+        setRole('user');
+    </script>
+</body>
+</html>

@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TaskFlow Dashboard</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+
+            <div class="logo">✓</div>
+
+            <h2>TaskFlow</h2>
+
+        </div>
+
+
+        <nav>
+
+            <button
+                class="nav-btn active"
+                onclick="showSection('overview')">
+
+                🏠 Dashboard
+
+            </button>
+
+
+            <button
+                class="nav-btn"
+                onclick="showSection('tasks')">
+
+                📋 Tasks
+
+            </button>
+
+
+            <button
+                id="usersNav"
+                class="nav-btn"
+                onclick="showSection('users')">
+
+                👥 Users
+
+            </button>
+
+        </nav>
+
+
+        <button
+            class="logout-btn"
+            onclick="logout()">
+
+            🚪 Logout
+
+        </button>
+
+    </aside>
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+
+    <main class="main-content">
+
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+            <div>
+
+                <h2 id="pageTitle">
+                    Dashboard
+                </h2>
+
+                <p id="welcomeText">
+                    Welcome back!
+                </p>
+
+            </div>
+
+
+            <div class="profile">
+
+                <div
+                    class="avatar"
+                    id="avatar">
+
+                    U
+
+                </div>
+
+
+                <div>
+
+                    <strong id="profileName">
+                        User
+                    </strong>
+
+                    <small id="profileRole">
+                        USER
+                    </small>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =========================
+             OVERVIEW
+        ========================== -->
+
+        <section
+            id="overview"
+            class="section">
+
+
+            <div class="stats-grid">
+
+
+                <!-- TOTAL TASKS -->
+
+                <div class="stat-card">
+
+                    <div>
+
+                        <p>Total Tasks</p>
+
+                        <h2 id="totalTasks">
+                            0
+                        </h2>
+
+                    </div>
+
+                    <span class="stat-icon">
+                        📋
+                    </span>
+
+                </div>
+
+
+                <!-- PENDING -->
+
+                <div class="stat-card">
+
+                    <div>
+
+                        <p>Pending</p>
+
+                        <h2 id="pendingTasks">
+                            0
+                        </h2>
+
+                    </div>
+
+                    <span class="stat-icon">
+                        ⏳
+                    </span>
+
+                </div>
+
+
+                <!-- COMPLETED -->
+
+                <div class="stat-card">
+
+                    <div>
+
+                        <p>Completed</p>
+
+                        <h2 id="completedTasks">
+                            0
+                        </h2>
+
+                    </div>
+
+                    <span class="stat-icon">
+                        ✅
+                    </span>
+
+                </div>
+
+
+                <!-- USERS - ADMIN ONLY -->
+
+                <div
+                    class="stat-card"
+                    id="usersCard">
+
+                    <div>
+
+                        <p>Total Users</p>
+
+                        <h2 id="totalUsers">
+                            0
+                        </h2>
+
+                    </div>
+
+                    <span class="stat-icon">
+                        👥
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- RECENT TASKS -->
+
+            <div class="dashboard-panel">
+
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <h3 id="recentTitle">
+                            Recent Tasks
+                        </h3>
+
+                        <p id="recentDescription">
+                            Overview of your latest tasks
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="primary-small"
+                        onclick="showSection('tasks')">
+
+                        View All
+
+                    </button>
+
+                </div>
+
+
+                <div id="recentTasks"></div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             TASK MANAGEMENT
+        ========================== -->
+
+        <section
+            id="tasks"
+            class="section hidden">
+
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2 id="taskHeading">
+                        Task Management
+                    </h2>
+
+                    <p id="taskDescription">
+                        Manage your tasks
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="primary-btn small"
+                    onclick="openTaskModal()">
+
+                    + Add Task
+
+                </button>
+
+            </div>
+
+
+
+            <!-- SEARCH + FILTER -->
+
+            <div class="filter-bar">
+
+                <input
+                    type="text"
+                    id="searchTask"
+                    placeholder="🔍 Search tasks..."
+                    oninput="renderTasks()">
+
+
+                <select
+                    id="statusFilter"
+                    onchange="renderTasks()">
+
+                    <option value="all">
+                        All Status
+                    </option>
+
+                    <option value="Pending">
+                        Pending
+                    </option>
+
+                    <option value="Completed">
+                        Completed
+                    </option>
+
+                </select>
+
+            </div>
+
+
+
+            <!-- TASK LIST -->
+
+            <div
+                id="taskList"
+                class="task-grid">
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             USER MANAGEMENT
+        ========================== -->
+
+        <section
+            id="users"
+            class="section hidden">
+
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>
+                        User Management
+                    </h2>
+
+                    <p>
+                        View all registered users
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Name
+                            </th>
+
+                            <th>
+                                Email
+                            </th>
+
+                            <th>
+                                Role
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="userTable">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+
+<!-- =========================
+     TASK MODAL
+========================== -->
+
+<div
+    id="taskModal"
+    class="modal hidden">
+
+
+    <div class="modal-card">
+
+
+        <div class="modal-header">
+
+            <h2 id="modalTitle">
+                Add Task
+            </h2>
+
+
+            <button
+                class="close-btn"
+                onclick="closeTaskModal()">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+
+        <form id="taskForm">
+
+
+            <!-- Hidden ID for editing -->
+
+            <input
+                type="hidden"
+                id="editTaskId">
+
+
+
+            <!-- TASK TITLE -->
+
+            <label>
+                Task Title
+            </label>
+
+            <input
+                type="text"
+                id="taskTitle"
+                placeholder="Enter task title"
+                required>
+
+
+
+            <!-- DESCRIPTION -->
+
+            <label>
+                Description
+            </label>
+
+            <textarea
+                id="taskDescriptionInput"
+                placeholder="Enter task description"
+                rows="4"></textarea>
+
+
+
+            <!-- PRIORITY + DEADLINE -->
+
+            <div class="form-row">
+
+
+                <div>
+
+                    <label>
+                        Priority
+                    </label>
+
+                    <select
+                        id="taskPriority">
+
+                        <option value="Low">
+                            Low
+                        </option>
+
+                        <option
+                            value="Medium"
+                            selected>
+
+                            Medium
+
+                        </option>
+
+                        <option value="High">
+                            High
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div>
+
+                    <label>
+                        Deadline
+                    </label>
+
+                    <input
+                        type="date"
+                        id="taskDeadline"
+                        required>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ASSIGN USER -->
+
+            <div id="assignUserBox">
+
+                <label>
+                    Assign To
+                </label>
+
+                <select
+                    id="taskUser"
+                    required>
+
+                </select>
+
+            </div>
+
+
+
+            <button
+                type="submit"
+                class="primary-btn">
+
+                Save Task
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+/* =====================================================
+   AUTHENTICATION
+===================================================== */
+
+const loggedInUser =
+    JSON.parse(
+        localStorage.getItem("loggedInUser")
+    );
+
+
+/*
+    If nobody is logged in,
+    send them back to Login.
+*/
+
+if (!loggedInUser) {
+
+    window.location.href = "index.html";
+
+}
+
+
+/* =====================================================
+   LOAD USERS AND TASKS
+===================================================== */
+
+let users =
+    JSON.parse(
+        localStorage.getItem("users")
+    ) || [];
+
+
+let tasks =
+    JSON.parse(
+        localStorage.getItem("tasks")
+    ) || [];
+
+
+
+/* =====================================================
+   PROFILE INFORMATION
+===================================================== */
+
+document.getElementById("profileName").textContent =
+    loggedInUser.name;
+
+
+document.getElementById("profileRole").textContent =
+    loggedInUser.role.toUpperCase();
+
+
+document.getElementById("welcomeText").textContent =
+    "Welcome back, " + loggedInUser.name + "!";
+
+
+document.getElementById("avatar").textContent =
+    loggedInUser.name
+        .charAt(0)
+        .toUpperCase();
+
+
+
+/* =====================================================
+   ROLE-BASED UI
+===================================================== */
+
+if (loggedInUser.role === "admin") {
+
+    /*
+        ADMIN
+    */
+
+    document.getElementById("taskHeading").textContent =
+        "Task Management";
+
+    document.getElementById("taskDescription").textContent =
+        "Create and assign tasks to users";
+
+    document.getElementById("recentTitle").textContent =
+        "All Recent Tasks";
+
+    document.getElementById("recentDescription").textContent =
+        "Overview of tasks assigned to users";
+
+} else {
+
+    /*
+        USER
+    */
+
+    document.getElementById("usersNav").style.display =
+        "none";
+
+
+    document.getElementById("usersCard").style.display =
+        "none";
+
+
+    document.getElementById("assignUserBox").style.display =
+        "none";
+
+
+    document.getElementById("taskHeading").textContent =
+        "My Assigned Tasks";
+
+
+    document.getElementById("taskDescription").textContent =
+        "View and manage tasks assigned to you";
+
+
+    document.getElementById("recentTitle").textContent =
+        "My Recent Tasks";
+
+
+    document.getElementById("recentDescription").textContent =
+        "Tasks assigned to you";
+
+}
+
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+function showSection(sectionId) {
+
+
+    /*
+        Hide every section
+    */
+
+    document
+        .querySelectorAll(".section")
+        .forEach(section => {
+
+            section.classList.add("hidden");
+
+        });
+
+
+
+    /*
+        Show selected section
+    */
+
+    document
+        .getElementById(sectionId)
+        .classList.remove("hidden");
+
+
+
+    /*
+        Remove active state
+    */
+
+    document
+        .querySelectorAll(".nav-btn")
+        .forEach(button => {
+
+            button.classList.remove("active");
+
+        });
+
+
+
+    /*
+        Dashboard
+    */
+
+    if (sectionId === "overview") {
+
+        document
+            .querySelectorAll(".nav-btn")[0]
+            .classList.add("active");
+
+
+        document.getElementById("pageTitle").textContent =
+            "Dashboard";
+
+    }
+
+
+
+    /*
+        Tasks
+    */
+
+    if (sectionId === "tasks") {
+
+        document
+            .querySelectorAll(".nav-btn")[1]
+            .classList.add("active");
+
+
+        document.getElementById("pageTitle").textContent =
+            loggedInUser.role === "admin"
+                ? "Task Management"
+                : "My Assigned Tasks";
+
+
+        renderTasks();
+
+    }
+
+
+
+    /*
+        Users
+    */
+
+    if (
+        sectionId === "users" &&
+        loggedInUser.role === "admin"
+    ) {
+
+        document
+            .querySelectorAll(".nav-btn")[2]
+            .classList.add("active");
+
+
+        document.getElementById("pageTitle").textContent =
+            "User Management";
+
+
+        renderUsers();
+
+    }
+
+}
+
+
+
+/* =====================================================
+   GET VISIBLE TASKS
+===================================================== */
+
+function getVisibleTasks() {
+
+
+    /*
+        ADMIN:
+        sees every task
+    */
+
+    if (loggedInUser.role === "admin") {
+
+        return tasks;
+
+    }
+
+
+    /*
+        USER:
+        sees only tasks assigned
+        to their email
+    */
+
+    return tasks.filter(
+        task =>
+            task.userEmail === loggedInUser.email
+    );
+
+}
+
+
+
+/* =====================================================
+   UPDATE STATISTICS
+===================================================== */
+
+function updateStats() {
+
+
+    const visibleTasks =
+        getVisibleTasks();
+
+
+    const total =
+        visibleTasks.length;
+
+
+    const pending =
+        visibleTasks.filter(
+            task =>
+                task.status === "Pending"
+        ).length;
+
+
+    const completed =
+        visibleTasks.filter(
+            task =>
+                task.status === "Completed"
+        ).length;
+
+
+    document.getElementById("totalTasks").textContent =
+        total;
+
+
+    document.getElementById("pendingTasks").textContent =
+        pending;
+
+
+    document.getElementById("completedTasks").textContent =
+        completed;
+
+
+    /*
+        Admin sees total users
+    */
+
+    document.getElementById("totalUsers").textContent =
+        users.filter(
+            user =>
+                user.role === "user"
+        ).length;
+
+}
+
+
+
+/* =====================================================
+   RENDER RECENT TASKS
+===================================================== */
+
+function renderRecentTasks() {
+
+
+    const container =
+        document.getElementById("recentTasks");
+
+
+    let visibleTasks =
+        getVisibleTasks();
+
+
+    /*
+        Show latest 5 tasks
+    */
+
+    visibleTasks =
+        visibleTasks
+            .slice()
+            .reverse()
+            .slice(0, 5);
+
+
+    if (visibleTasks.length === 0) {
+
+        container.innerHTML = `
+            <div class="empty">
+
+                ${
+                    loggedInUser.role === "admin"
+                    ? "No tasks have been created yet."
+                    : "No tasks have been assigned to you yet."
+                }
+
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+
+    container.innerHTML =
+        visibleTasks.map(task => `
+
+            <div class="recent-task">
+
+                <div>
+
+                    <strong>
+                        ${task.title}
+                    </strong>
+
+                    <p>
+                        ${
+                            task.description ||
+                            "No description"
+                        }
+                    </p>
+
+                    ${
+                        loggedInUser.role === "admin"
+                        ?
+                        `<small>
+                            👤 Assigned to:
+                            ${task.userEmail}
+                        </small>`
+                        :
+                        `<small>
+                            👤 Assigned by: Admin
+                        </small>`
+                    }
+
+                </div>
+
+
+                <span
+                    class="status ${task.status.toLowerCase()}">
+
+                    ${task.status}
+
+                </span>
+
+            </div>
+
+        `).join("");
+
+}
+
+
+
+/* =====================================================
+   RENDER TASKS
+===================================================== */
+
+function renderTasks() {
+
+
+    const container =
+        document.getElementById("taskList");
+
+
+    let visibleTasks =
+        getVisibleTasks();
+
+
+
+    /*
+        SEARCH
+    */
+
+    const search =
+        document
+            .getElementById("searchTask")
+            .value
+            .toLowerCase();
+
+
+
+    /*
+        STATUS FILTER
+    */
+
+    const status =
+        document
+            .getElementById("statusFilter")
+            .value;
+
+
+
+    /*
+        Apply filters
+    */
+
+    visibleTasks =
+        visibleTasks.filter(task => {
+
+
+            const matchesSearch =
+                task.title
+                    .toLowerCase()
+                    .includes(search);
+
+
+            const matchesStatus =
+                status === "all" ||
+                task.status === status;
+
+
+            return (
+                matchesSearch &&
+                matchesStatus
+            );
+
+        });
+
+
+
+    /*
+        No tasks
+    */
+
+    if (visibleTasks.length === 0) {
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                ${
+                    loggedInUser.role === "admin"
+                    ?
+                    "No tasks found."
+                    :
+                    "No tasks have been assigned to you yet."
+                }
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+
+    /*
+        Display task cards
+    */
+
+    container.innerHTML =
+        visibleTasks.map(task => `
+
+            <div class="task-card">
+
+
+                <!-- TOP -->
+
+                <div class="task-top">
+
+                    <span
+                        class="priority ${task.priority.toLowerCase()}">
+
+                        ${task.priority}
+
+                    </span>
+
+
+                    <span
+                        class="status ${task.status.toLowerCase()}">
+
+                        ${task.status}
+
+                    </span>
+
+                </div>
+
+
+
+                <!-- TITLE -->
+
+                <h3>
+                    ${task.title}
+                </h3>
+
+
+
+                <!-- DESCRIPTION -->
+
+                <p>
+
+                    ${
+                        task.description ||
+                        "No description"
+                    }
+
+                </p>
+
+
+
+                <!-- ASSIGNMENT -->
+
+                <div class="task-info">
+
+
+                    ${
+                        loggedInUser.role === "admin"
+
+                        ?
+
+                        `<span>
+                            👤 Assigned to:
+                            ${task.userEmail}
+                        </span>`
+
+                        :
+
+                        `<span>
+                            👤 Assigned by:
+                            Admin
+                        </span>`
+
+                    }
+
+
+                    <span>
+                        📅 Deadline:
+                        ${task.deadline}
+                    </span>
+
+
+                </div>
+
+
+
+                <!-- ACTIONS -->
+
+                <div class="task-actions">
+
+
+                    ${
+                        task.status === "Pending"
+
+                        ?
+
+                        `<button
+                            onclick="completeTask(${task.id})"
+                            class="complete-btn">
+
+                            ✓ Complete
+
+                        </button>`
+
+                        :
+
+                        ""
+
+                    }
+
+
+
+                    ${
+                        loggedInUser.role === "admin"
+
+                        ?
+
+                        `<button
+                            onclick="editTask(${task.id})"
+                            class="edit-btn">
+
+                            Edit
+
+                        </button>
+
+                        <button
+                            onclick="deleteTask(${task.id})"
+                            class="delete-btn">
+
+                            Delete
+
+                        </button>`
+
+                        :
+
+                        ""
+
+                    }
+
+                </div>
+
+
+            </div>
+
+        `).join("");
+
+}
+
+
+
+/* =====================================================
+   OPEN TASK MODAL
+===================================================== */
+
+function openTaskModal(task = null) {
+
+
+    const modal =
+        document.getElementById("taskModal");
+
+
+    modal.classList.remove("hidden");
+
+
+
+    /*
+        Load users into assignment dropdown
+    */
+
+    if (loggedInUser.role === "admin") {
+
+
+        const userSelect =
+            document.getElementById("taskUser");
+
+
+        const normalUsers =
+            users.filter(
+                user =>
+                    user.role === "user"
+            );
+
+
+        userSelect.innerHTML =
+            normalUsers.map(user => `
+
+                <option value="${user.email}">
+
+                    ${user.name}
+                    (${user.email})
+
+                </option>
+
+            `).join();
+
+
+
+        /*
+            If there are no users
+        */
+
+        if (normalUsers.length === 0) {
+
+            userSelect.innerHTML = `
+                <option value="">
+                    No users available
+                </option>
+            `;
+
+        }
+
+    }
+
+
+
+    /*
+        EDIT MODE
+    */
+
+    if (task) {
+
+
+        document.getElementById("modalTitle")
+            .textContent =
+            "Edit Task";
+
+
+        document.getElementById("editTaskId")
+            .value =
+            task.id;
+
+
+        document.getElementById("taskTitle")
+            .value =
+            task.title;
+
+
+        document.getElementById("taskDescriptionInput")
+            .value =
+            task.description || "";
+
+
+        document.getElementById("taskPriority")
+            .value =
+            task.priority;
+
+
+        document.getElementById("taskDeadline")
+            .value =
+            task.deadline;
+
+
+        if (loggedInUser.role === "admin") {
+
+            document.getElementById("taskUser")
+                .value =
+                task.userEmail;
+
+        }
+
+    }
+
+
+    /*
+        ADD MODE
+    */
+
+    else {
+
+
+        document.getElementById("modalTitle")
+            .textContent =
+            "Create & Assign Task";
+
+
+        document.getElementById("taskForm")
+            .reset();
+
+
+        document.getElementById("editTaskId")
+            .value = "";
+
+    }
+
+}
+
+
+
+/* =====================================================
+   CLOSE MODAL
+===================================================== */
+
+function closeTaskModal() {
+
+    document
+        .getElementById("taskModal")
+        .classList.add("hidden");
+
+
+    document
+        .getElementById("taskForm")
+        .reset();
+
+}
+
+
+
+/* =====================================================
+   SAVE TASK
+===================================================== */
+
+document
+    .getElementById("taskForm")
+    .addEventListener(
+        "submit",
+        function(event) {
+
+
+            event.preventDefault();
+
+
+
+            /*
+                Get form data
+            */
+
+            const editId =
+                document
+                    .getElementById("editTaskId")
+                    .value;
+
+
+            const title =
+                document
+                    .getElementById("taskTitle")
+                    .value
+                    .trim();
+
+
+            const description =
+                document
+                    .getElementById("taskDescriptionInput")
+                    .value
+                    .trim();
+
+
+            const priority =
+                document
+                    .getElementById("taskPriority")
+                    .value;
+
+
+            const deadline =
+                document
+                    .getElementById("taskDeadline")
+                    .value;
+
+
+
+            /*
+                Determine assigned user
+            */
+
+            let userEmail;
+
+
+            if (loggedInUser.role === "admin") {
+
+                userEmail =
+                    document
+                        .getElementById("taskUser")
+                        .value;
+
+            } else {
+
+                /*
+                    Users create their own tasks
+                */
+
+                userEmail =
+                    loggedInUser.email;
+
+            }
+
+
+
+            /*
+                EDIT EXISTING TASK
+            */
+
+            if (editId) {
+
+
+                const task =
+                    tasks.find(
+                        task =>
+                            task.id == editId
+                    );
+
+
+                if (task) {
+
+                    task.title =
+                        title;
+
+                    task.description =
+                        description;
+
+                    task.priority =
+                        priority;
+
+                    task.deadline =
+                        deadline;
+
+
+                    /*
+                        Admin can change
+                        task assignment
+                    */
+
+                    if (
+                        loggedInUser.role ===
+                        "admin"
+                    ) {
+
+                        task.userEmail =
+                            userEmail;
+
+                    }
+
+                }
+
+            }
+
+
+
+            /*
+                CREATE NEW TASK
+            */
+
+            else {
+
+
+                const newTask = {
+
+                    id: Date.now(),
+
+                    title:
+                        title,
+
+                    description:
+                        description,
+
+                    priority:
+                        priority,
+
+                    deadline:
+                        deadline,
+
+                    status:
+                        "Pending",
+
+                    userEmail:
+                        userEmail
+
+                };
+
+
+                tasks.push(newTask);
+
+            }
+
+
+
+            /*
+                Save to Local Storage
+            */
+
+            localStorage.setItem(
+                "tasks",
+                JSON.stringify(tasks)
+            );
+
+
+
+            /*
+                Close modal
+            */
+
+            closeTaskModal();
+
+
+
+            /*
+                Refresh dashboard
+            */
+
+            updateStats();
+
+            renderTasks();
+
+            renderRecentTasks();
+
+        }
+    );
+
+
+
+/* =====================================================
+   EDIT TASK
+===================================================== */
+
+function editTask(id) {
+
+
+    const task =
+        tasks.find(
+            task =>
+                task.id === id
+        );
+
+
+    if (!task) {
+        return;
+    }
+
+
+    /*
+        Only Admin can edit
+        assigned task information.
+    */
+
+    if (
+        loggedInUser.role !== "admin" &&
+        task.userEmail !== loggedInUser.email
+    ) {
+
+        alert(
+            "You cannot edit this task."
+        );
+
+        return;
+
+    }
+
+
+    openTaskModal(task);
+
+}
+
+
+
+/* =====================================================
+   DELETE TASK
+===================================================== */
+
+function deleteTask(id) {
+
+
+    if (
+        !confirm(
+            "Are you sure you want to delete this task?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    tasks =
+        tasks.filter(
+            task =>
+                task.id !== id
+        );
+
+
+    localStorage.setItem(
+        "tasks",
+        JSON.stringify(tasks)
+    );
+
+
+    updateStats();
+
+    renderTasks();
+
+    renderRecentTasks();
+
+}
+
+
+
+/* =====================================================
+   COMPLETE TASK
+===================================================== */
+
+function completeTask(id) {
+
+
+    const task =
+        tasks.find(
+            task =>
+                task.id === id
+        );
+
+
+    if (!task) {
+        return;
+    }
+
+
+
+    /*
+        Make sure user owns the task
+    */
+
+    if (
+        loggedInUser.role === "user" &&
+        task.userEmail !==
+        loggedInUser.email
+    ) {
+
+        alert(
+            "You can only complete your own assigned tasks."
+        );
+
+        return;
+
+    }
+
+
+
+    task.status =
+        "Completed";
+
+
+    localStorage.setItem(
+        "tasks",
+        JSON.stringify(tasks)
+    );
+
+
+    updateStats();
+
+    renderTasks();
+
+    renderRecentTasks();
+
+}
+
+
+
+/* =====================================================
+   RENDER USERS
+===================================================== */
+
+function renderUsers() {
+
+
+    const table =
+        document.getElementById(
+            "userTable"
+        );
+
+
+    const normalUsers =
+        users.filter(
+            user =>
+                user.role === "user"
+        );
+
+
+
+    if (normalUsers.length === 0) {
+
+        table.innerHTML = `
+
+            <tr>
+
+                <td colspan="3">
+
+                    No users registered yet.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+
+    table.innerHTML =
+        normalUsers.map(user => `
+
+            <tr>
+
+                <td>
+                    ${user.name}
+                </td>
+
+                <td>
+                    ${user.email}
+                </td>
+
+                <td>
+
+                    <span class="role-badge">
+                        USER
+                    </span>
+
+                </td>
+
+            </tr>
+
+        `).join("");
+
+}
+
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+function logout() {
+
+
+    localStorage.removeItem(
+        "loggedInUser"
+    );
+
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+
+/* =====================================================
+   INITIAL LOAD
+===================================================== */
+
+updateStats();
+
+renderRecentTasks();
+
+</script>
+
+</body>
+
+</html>

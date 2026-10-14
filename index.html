@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Management System</title>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ================= AUTHENTICATION CONTAINER ================= -->
+  <div id="auth-screen" class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="brand-logo">
+          <i class="fa-solid fa-list-check"></i>
+          <span>Task Management System</span>
+        </div>
+        <p class="auth-subtitle">Manage your assigned work effectively</p>
+      </div>
+
+      <div class="tab-toggle">
+        <button id="tab-login" class="tab-btn active" onclick="switchAuthTab('login')">
+          <i class="fa-solid fa-right-to-bracket"></i> Login
+        </button>
+        <button id="tab-register" class="tab-btn" onclick="switchAuthTab('register')">
+          <i class="fa-solid fa-user-plus"></i> Register
+        </button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="auth-form active">
+        <div class="form-group">
+          <label><i class="fa-regular fa-envelope"></i> Email Address</label>
+          <input type="email" id="login-email" placeholder="john@example.com" value="john@example.com" required>
+        </div>
+        <div class="form-group">
+          <label><i class="fa-solid fa-lock"></i> Password</label>
+          <input type="password" id="login-password" placeholder="••••••••" value="password123" required>
+        </div>
+        <button type="submit" class="btn-primary full-width">
+          Sign In <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </form>
+
+      <!-- Register Form -->
+      <form id="register-form" class="auth-form hidden">
+        <div class="form-group">
+          <label><i class="fa-regular fa-user"></i> Full Name</label>
+          <input type="text" id="reg-name" placeholder="John Doe" required>
+        </div>
+        <div class="form-group">
+          <label><i class="fa-regular fa-envelope"></i> Email Address</label>
+          <input type="email" id="reg-email" placeholder="john@example.com" required>
+        </div>
+        <div class="form-group">
+          <label><i class="fa-solid fa-lock"></i> Password</label>
+          <input type="password" id="reg-password" placeholder="At least 6 characters" required>
+        </div>
+        <button type="submit" class="btn-primary full-width">
+          Create Account <i class="fa-solid fa-user-check"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MAIN TASK MANAGEMENT DASHBOARD ================= -->
+  <div id="portal-app" class="dashboard-layout hidden">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <i class="fa-solid fa-list-check brand-icon"></i>
+        <h2>Task Management System</h2>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="#" class="menu-item active">
+          <i class="fa-solid fa-list-check"></i>
+          <span>My Tasks</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="logout-btn" onclick="handleLogout()">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          <span>Log Out</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Top Navigation Header -->
+      <header class="top-header">
+        <div class="header-search">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input type="text" id="task-search-input" placeholder="Search tasks by title or tag..." oninput="handleSearch()">
+        </div>
+
+        <div class="user-pill" id="user-pill">
+          <div class="user-avatar" id="header-avatar-circle">J</div>
+          <span class="user-name" id="user-display-name">john</span>
+        </div>
+      </header>
+
+      <!-- Page Content Section -->
+      <div class="content-body">
+        
+        <div class="page-title-row">
+          <div>
+            <h1 class="page-title">My Assigned Tasks</h1>
+            <p class="page-subtitle">Track, organize, and complete your assigned items</p>
+          </div>
+          <button class="btn-primary" onclick="openCreateModal()">
+            <i class="fa-solid fa-plus"></i> New Task
+          </button>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-bar">
+          <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">
+            All Tasks <span class="badge" id="count-all">0</span>
+          </button>
+          <button class="filter-btn" data-filter="todo" onclick="setFilter('todo', this)">
+            To Do <span class="badge" id="count-todo">0</span>
+          </button>
+          <button class="filter-btn" data-filter="in-progress" onclick="setFilter('in-progress', this)">
+            In Progress <span class="badge" id="count-in-progress">0</span>
+          </button>
+          <button class="filter-btn" data-filter="completed" onclick="setFilter('completed', this)">
+            Completed <span class="badge" id="count-completed">0</span>
+          </button>
+        </div>
+
+        <!-- Task Cards Grid Container -->
+        <div id="tasks-grid" class="tasks-grid">
+          <!-- Dynamic Task Cards Render Here -->
+        </div>
+
+        <!-- Empty State Container -->
+        <div id="empty-state" class="empty-state hidden">
+          <i class="fa-regular fa-folder-open empty-icon"></i>
+          <h3>No tasks found</h3>
+          <p>You don't have any tasks matching this view.</p>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ================= ADD / EDIT TASK MODAL ================= -->
+  <div id="task-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title">Create New Task</h3>
+        <button class="close-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="task-form" onsubmit="saveTask(event)">
+        <input type="hidden" id="task-id">
+
+        <div class="form-group">
+          <label>Task Title *</label>
+          <input type="text" id="task-title" placeholder="e.g. Design Landing Page" required>
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="task-desc" rows="3" placeholder="Brief details about what needs to be done..."></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group half">
+            <label>Priority</label>
+            <select id="task-priority">
+              <option value="Low">Low</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="High">High</option>
+            </select>
+          </div>
+          <div class="form-group half">
+            <label>Status</label>
+            <select id="task-status">
+              <option value="todo">To Do</option>
+              <option value="in-progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Image Picker Section -->
+        <div class="form-group">
+          <label>Choose Task Header Image</label>
+          <div class="image-picker-grid">
+            <label class="img-option">
+              <input type="radio" name="task-img" value="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=600&q=80" checked>
+              <img src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=150&q=80" alt="Design">
+            </label>
+            <label class="img-option">
+              <input type="radio" name="task-img" value="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80">
+              <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=150&q=80" alt="Code">
+            </label>
+            <label class="img-option">
+              <input type="radio" name="task-img" value="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80">
+              <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=150&q=80" alt="Analytics">
+            </label>
+            <label class="img-option">
+              <input type="radio" name="task-img" value="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&q=80">
+              <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=150&q=80" alt="Mobile">
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="btn-primary">Save Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
